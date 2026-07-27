@@ -1,5 +1,7 @@
 # Yargı MCP: Türk Hukuk Kaynakları için MCP Sunucusu
 
+[![MCP Toplist](https://mcptoplist.com/badge/glama%2Fsaidsurucu%2Fyargi-mcp.svg)](https://mcptoplist.com/server/glama%2Fsaidsurucu%2Fyargi-mcp)
+
 > ## ✨ Profesyonel Sürüm Hazır: Yargı MCP Pro
 >
 > **Mevzuat ve içtihatı tek bir MCP sunucusunda birleştiren** profesyonel sürüm yayında:
