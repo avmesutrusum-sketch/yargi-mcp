@@ -17,6 +17,7 @@ COPY README.md ./
 # Copy entry points
 COPY app.py ./
 COPY asgi_app.py ./
+COPY example_fastapi_app.py ./
 COPY mcp_server_main.py ./
 
 # Copy MCP modules and shared packages
