@@ -1,9 +1,8 @@
 import os
 import hmac
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import FastAPI, HTTPException, Depends, Header
 from pydantic import BaseModel, Field
 from fastmcp import Client
 
@@ -14,7 +13,7 @@ from fastmcp import Client
 
 YARGI_MCP_URL = os.getenv(
     "YARGI_MCP_URL",
-    "https://yargimcp.surucu.dev/mcp"
+    "https://yargimcp.surucu.dev/mcp",
 )
 
 BRIDGE_API_KEY = os.getenv("BRIDGE_API_KEY")
@@ -30,7 +29,7 @@ app = FastAPI(
         "ChatGPT Actions ile Yargi MCP arasinda guvenli REST koprusu. "
         "Yargi MCP araclarini listeler ve secilen araci calistirir."
     ),
-    version="1.0.0",
+    version="1.1.0",
 )
 
 
@@ -38,11 +37,11 @@ app = FastAPI(
 # AUTH
 # ---------------------------------------------------------
 
-bearer_scheme = HTTPBearer(auto_error=False)
-
-
 def verify_api_key(
-    credentials: HTTPAuthorizationCredentials = Depends(bearer_scheme),
+    x_bridge_key: Optional[str] = Header(
+        default=None,
+        alias="X-Bridge-Key",
+    ),
 ):
     if not BRIDGE_API_KEY:
         raise HTTPException(
@@ -50,14 +49,14 @@ def verify_api_key(
             detail="BRIDGE_API_KEY sunucu ortam degiskeni tanimlanmamis.",
         )
 
-    if credentials is None:
+    if not x_bridge_key:
         raise HTTPException(
             status_code=401,
-            detail="Authorization Bearer anahtari gerekli.",
+            detail="X-Bridge-Key API anahtari gerekli.",
         )
 
     if not hmac.compare_digest(
-        credentials.credentials,
+        x_bridge_key,
         BRIDGE_API_KEY,
     ):
         raise HTTPException(
@@ -149,6 +148,7 @@ async def root():
         "mcp_server": YARGI_MCP_URL,
         "docs": "/docs",
         "openapi": "/openapi.json",
+        "authentication": "X-Bridge-Key",
     }
 
 
